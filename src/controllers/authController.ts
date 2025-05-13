@@ -36,7 +36,7 @@ export const login = async (req: Request, res: Response, next: NextFunction)=> {
 };
 
 export const profile = async (req: Request, res: Response, next: NextFunction) => {
-  const userId = req.user?.id;
+  const userId = (req.user as { id: number })?.id;
   if (!userId) return res.status(401).json({ error: 'Unauthorized' });
   const cacheKey = `user:profile:${userId}`;
 
@@ -70,7 +70,7 @@ export const profile = async (req: Request, res: Response, next: NextFunction) =
 };
 
 export const updateProfile = async (req: Request, res: Response, next: NextFunction)=> {
-  const userId = req.user?.id;
+  const userId = (req.user as { id: number })?.id;
   const { username, password, currentPassword } = req.body;
   try{
     const user = await prisma.user.findUnique({ where: { id: userId } });
