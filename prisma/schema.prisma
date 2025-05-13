@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  password     String
+  username     String?
+  createdAt    DateTime       @default(now())
+  xp           Int            @default(0)
+  level        Int            @default(1)
+  UserProgress UserProgress[]
+}
+
+model Hanzi {
+  id      Int     @id @default(autoincrement())
+  hanzi   String  @unique
+  pinyin  String?
+  meaning String?
+}
+
+model Cihui {
+  id    Int    @id @default(autoincrement())
+  ch    String @unique
+  en    String
+  level Int    @default(0)
+}
+
+model Enword {
+  id                Int                @id @default(autoincrement())
+  word              String             @unique
+  examples          Enexp[]
+  wordFamilyMembers WordFamilyMember[]
+}
+
+model Enexp {
+  id      Int    @id @default(autoincrement())
+  exp     String
+  wordKey String
+  enword  Enword @relation(fields: [wordKey], references: [word], onDelete: Cascade)
+}
+
+model WordFamilyGroup {
+  id    Int                @id @default(autoincrement())
+  label String?
+  words WordFamilyMember[]
+}
+
+model WordFamilyMember {
+  id      Int             @id @default(autoincrement())
+  type    String?
+  word    String
+  enword  Enword?         @relation(fields: [word], references: [word], onDelete: Cascade)
+  groupId Int
+  group   WordFamilyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, word])
+}
+
+model UserProgress {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemType  ProgressItemType
+  itemId    Int
+  status    ProgressStatus
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@unique([userId, itemType, itemId])
+}
+
+enum ProgressItemType {
+  hanzi
+  cihui
+  enexp
+  idiom
+  phv
+}
+
+enum ProgressStatus {
+  learning
+  review
+  mastered
+  partial
+}

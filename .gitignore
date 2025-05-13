@@ -1,0 +1,4 @@
+node_modules/
+dist/
+vocabzilla-client/
+.env

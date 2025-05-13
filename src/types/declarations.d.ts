@@ -1,0 +1,10 @@
+declare module 'morgan';
+declare module 'hpp';
+declare module 'passport';
+declare module 'passport-jwt';
+declare module 'bcrypt';
+declare module 'jsonwebtoken';
+declare module 'compression';
+declare module 'cookie-parser';
+declare module 'csurf';
+declare module 'nodemailer';
