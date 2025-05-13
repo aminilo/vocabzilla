@@ -10,8 +10,7 @@ const PORT = process.env.PORT ?? 1234;
 const server = createServer(app);
 const io = new SocketIOServer(server, {
 	cors: {
-		origin: '*',
-		methods: ["GET", "POST"],
+		origin: 'https://vocabzilla.onrender.com',
 		credentials: true
 	}
 })
