@@ -3,73 +3,65 @@ import path from 'path';
 import csv from 'csv-parser';
 import prisma from '../utils/prismaClient';
 
-type Row = {
-  label: string;
-  word: string;
-  type: string;
-};
+type Row = { label: string; word: string };
 
-const csvFilePath = path.join(__dirname, 'word_family.csv');
+const CSV_PATH = path.join(__dirname, 'word_family.csv');
+const GROUP_CSV = path.join(__dirname, 'word_family_groups.csv');
+const MEMBER_CSV = path.join(__dirname, 'word_family_members.csv');
 
-const rows: Row[] = [];
-
-fs.createReadStream(csvFilePath)
-  .pipe(csv())
-  .on('data', (row: any) => {
-    rows.push({
-      label: row.label.trim(),
-      word: row.word.trim(),
-      type: row.type.trim()
-    });
-  })
-  .on('end', async () => {
-    console.log(`📦 Loaded ${rows.length} rows...`);
-
-    // Group by label
-    const grouped: Record<string, Row[]> = {};
-    for (const row of rows) {
-      if (!grouped[row.label]) grouped[row.label] = [];
-      grouped[row.label].push(row);
-    }
-
-    for (const label of Object.keys(grouped)) {
-      const members = grouped[label];
-
-      // Check if group already exists
-      let group = await prisma.wordFamilyGroup.findFirst({ where: { label } });
-      if (!group) {
-        group = await prisma.wordFamilyGroup.create({ data: { label } });
-        console.log(`✅ Created group: ${label}`);
-      } else {
-        console.log(`ℹ️ Group "${label}" already exists`);
-      }
-
-      let count = 0;
-
-      for (const { word, type } of members) {
-        try {
-          await prisma.wordFamilyMember.upsert({
-            where: {
-              groupId_word: {
-                groupId: group.id,
-                word
-              }
-            },
-            update: { type },
-            create: {
-              word,
-              type,
-              groupId: group.id
-            }
-          });
-          count++;
-        } catch (err) {
-          console.error(`❌ Failed to insert: ${word} in group "${label}"`, err);
+async function main() {
+  // Phase 1: Collect all data from CSV
+  const labelMap = new Map<string, string[]>();
+  
+  await new Promise<void>((resolve) => {
+    fs.createReadStream(CSV_PATH)
+      .pipe(csv({ headers: ['label', 'word'] }))
+      .on('data', (row: Row) => {
+        const label = row.label.trim();
+        const word = row.word.trim();
+        if (label && word) {
+          labelMap.set(label, [...(labelMap.get(label) || []), word]);
         }
-      }
-
-      console.log(`✅ Synced ${count} word(s) to group "${label}"`);
-    }
-
-    process.exit(0);
+      })
+      .on('end', () => resolve());
   });
+
+  // Phase 2: Bulk create groups
+  const labels = Array.from(labelMap.keys());
+  await prisma.$transaction([
+    prisma.wordFamilyGroup.createMany({
+      data: labels.map(label => ({ label })),
+      skipDuplicates: true,
+    })
+  ]);
+
+  // Phase 3: Get group IDs
+  const groups = await prisma.wordFamilyGroup.findMany({
+    where: { label: { in: labels } }
+  });
+  const groupIdMap = new Map(groups.map(g => [g.label, g.id]));
+
+  // Phase 4: Generate CSVs
+  // Generate groups CSV (for reference)
+  fs.writeFileSync(GROUP_CSV, 'id,label\n' + 
+    groups.map(g => `${g.id},${g.label}`).join('\n'));
+
+  // Generate members CSV
+  const memberRows = Array.from(labelMap.entries())
+    .flatMap(([label, words]) => 
+      words.map(word => `${groupIdMap.get(label)},${word}`)
+    );
+  
+  fs.writeFileSync(MEMBER_CSV, 'groupId,word\n' + memberRows.join('\n'));
+
+  console.log(`✅ Generated:
+- Groups: ${groups.length} (${GROUP_CSV})
+- Members: ${memberRows.length} (${MEMBER_CSV})`);
+}
+
+main()
+  .catch(e => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(() => prisma.$disconnect());
