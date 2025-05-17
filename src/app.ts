@@ -24,7 +24,7 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      connectSrc: ["'self'", "http://localhost:5173"], // frontend dev server if needed
+      connectSrc: ["'self'", "http://localhost:5173"], /* frontend dev server if needed */
       imgSrc: ["'self'", "data:"],
     }
   }
@@ -32,10 +32,10 @@ app.use(helmet({
 app.use(hpp());
 
 const allowedOrigins = [
-	// 'https://vocabzilla.onrender.com',
-	'http://localhost:8000',
-	'http://localhost:5173',
-	'http://127.0.0.1:5173'
+	'https://vocabzilla.onrender.com',
+	// 'http://localhost:8000',
+	// 'http://localhost:5173',
+	// 'http://127.0.0.1:5173'
 ];
 app.use(cors({
 	// origin: process.env.CLIENT_URL || '*',
