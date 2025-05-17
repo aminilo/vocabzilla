@@ -11,8 +11,10 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "username" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "xp" INTEGER NOT NULL DEFAULT 0,
-    "level" INTEGER NOT NULL DEFAULT 1,
+    "enXp" INTEGER NOT NULL DEFAULT 0,
+    "enLevel" INTEGER NOT NULL DEFAULT 1,
+    "chXp" INTEGER NOT NULL DEFAULT 0,
+    "chLevel" INTEGER NOT NULL DEFAULT 1,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -38,11 +40,12 @@ CREATE TABLE "Cihui" (
 );
 
 -- CreateTable
-CREATE TABLE "CihuiHanzi" (
-    "hanziId" INTEGER NOT NULL,
-    "cihuiId" INTEGER NOT NULL,
+CREATE TABLE "Cihuiexp" (
+    "id" SERIAL NOT NULL,
+    "exp" TEXT NOT NULL,
+    "wordKey" TEXT NOT NULL,
 
-    CONSTRAINT "CihuiHanzi_pkey" PRIMARY KEY ("hanziId","cihuiId")
+    CONSTRAINT "Cihuiexp_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -112,10 +115,7 @@ CREATE UNIQUE INDEX "WordFamilyMember_groupId_word_key" ON "WordFamilyMember"("g
 CREATE UNIQUE INDEX "UserProgress_userId_itemType_itemId_key" ON "UserProgress"("userId", "itemType", "itemId");
 
 -- AddForeignKey
-ALTER TABLE "CihuiHanzi" ADD CONSTRAINT "CihuiHanzi_hanziId_fkey" FOREIGN KEY ("hanziId") REFERENCES "Hanzi"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "CihuiHanzi" ADD CONSTRAINT "CihuiHanzi_cihuiId_fkey" FOREIGN KEY ("cihuiId") REFERENCES "Cihui"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Cihuiexp" ADD CONSTRAINT "Cihuiexp_wordKey_fkey" FOREIGN KEY ("wordKey") REFERENCES "Cihui"("ch") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Enexp" ADD CONSTRAINT "Enexp_wordKey_fkey" FOREIGN KEY ("wordKey") REFERENCES "Enword"("word") ON DELETE CASCADE ON UPDATE CASCADE;

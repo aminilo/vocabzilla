@@ -43,7 +43,7 @@ export const profile = async (req: Request, res: Response, next: NextFunction) =
   try {
     const cached = await redisClient.get(cacheKey);
     if (cached) {
-      console.log(`[CACHE] Hit for user ${userId}`);
+      // console.log(`[CACHE] Hit for user ${userId}`);
       return res.status(200).json({ user: JSON.parse(cached) });
     }
 
@@ -54,8 +54,10 @@ export const profile = async (req: Request, res: Response, next: NextFunction) =
         id: true,
         email: true,
         username: true,
-        xp: true,
-        level: true,
+        enXp: true,
+        enLevel: true,
+        chXp: true,
+        chLevel: true,
         createdAt: true
       }
     });

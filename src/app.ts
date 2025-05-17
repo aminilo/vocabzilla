@@ -17,7 +17,7 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.json());
 app.use(cookieParser());
-app.use(morgan('dev')); /* combined / common / dev / tiny */
+// app.use(morgan('dev')); /* combined / common / dev / tiny */
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -32,10 +32,10 @@ app.use(helmet({
 app.use(hpp());
 
 const allowedOrigins = [
-	'https://vocabzilla.onrender.com',
-	// 'http://localhost:8000',
-	// 'http://localhost:5173',
-	// 'http://127.0.0.1:5173'
+	// 'https://vocabzilla.onrender.com',
+	'http://localhost:8000',
+	'http://localhost:5173',
+	'http://127.0.0.1:5173'
 ];
 app.use(cors({
 	// origin: process.env.CLIENT_URL || '*',

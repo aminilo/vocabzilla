@@ -8,14 +8,14 @@ export const getAllWords = async (req: Request, res: Response, next: NextFunctio
 	const searchStr = typeof search === 'string' ? search.trim() : undefined;
 	const pageNumber = parseInt(page as string, 10);
 	const limit = parseInt(pageSize as string, 10);
-	const cacheKey = `enword:all:${searchStr || 'all'}:page:${pageNumber}:limit:${limit}`;
+	// const cacheKey = `enword:all:${searchStr || 'all'}:page:${pageNumber}:limit:${limit}`;
 	
 	try{
-		const cached = await redisClient.get(cacheKey);
-		if (cached) {
-			console.log(`[CACHE HIT] ${cacheKey}`);
-			return res.status(200).json(JSON.parse(cached));
-		}
+		// const cached = await redisClient.get(cacheKey);
+		// if (cached) {
+		// 	console.log(`[CACHE HIT] ${cacheKey}`);
+		// 	return res.status(200).json(JSON.parse(cached));
+		// }
 
 		const whereClause = searchStr ? { word: { contains: searchStr, mode: Prisma.QueryMode.insensitive } } : {};
 
@@ -33,7 +33,7 @@ export const getAllWords = async (req: Request, res: Response, next: NextFunctio
 		const response = { total, page: pageNumber, totalPages: Math.ceil(total / limit), limit, words };
 
 		/* ⏳ Cache for 1 hour */
-		await redisClient.set(cacheKey, JSON.stringify(response), { EX: 60 * 60 });
+		// await redisClient.set(cacheKey, JSON.stringify(response), { EX: 60 * 60 });
 
 		res.status(200).json(response);
 	}catch(err){ next(err); }

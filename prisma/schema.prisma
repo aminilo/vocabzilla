@@ -19,8 +19,10 @@ model User {
   password     String
   username     String?
   createdAt    DateTime       @default(now())
-  xp           Int            @default(0)
-  level        Int            @default(1)
+  enXp          Int            @default(0)
+  enLevel       Int            @default(1)
+  chXp          Int            @default(0)
+  chLevel       Int            @default(1)
   UserProgress UserProgress[]
 }
 
@@ -32,10 +34,18 @@ model Hanzi {
 }
 
 model Cihui {
-  id    Int    @id @default(autoincrement())
-  ch    String @unique
-  en    String
-  level Int    @default(0)
+  id       Int        @id @default(autoincrement())
+  ch       String     @unique
+  en       String
+  level    Int        @default(0)
+  examples Cihuiexp[]
+}
+
+model Cihuiexp {
+  id      Int    @id @default(autoincrement())
+  exp     String
+  wordKey String
+  cihui   Cihui  @relation(fields: [wordKey], references: [ch], onDelete: Cascade)
 }
 
 model Enword {

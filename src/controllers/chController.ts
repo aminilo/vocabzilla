@@ -12,7 +12,7 @@ export const getHanzi = async (req: Request, res: Response, next: NextFunction)=
   try{
     const cached = await redisClient.get(cacheKey);
     if (cached) {
-      console.log(`[CACHE HIT] ${cacheKey}`);
+      // console.log(`[CACHE HIT] ${cacheKey}`);
       return res.status(200).json(JSON.parse(cached));
     }
 
@@ -44,7 +44,7 @@ export const getHanziWithWords = async (req: Request, res: Response, next: NextF
     /* 🔍 Try to get from Redis */
     const cached = await redisClient.get(redisKey);
     if( cached ) {
-      console.log(`[CACHE HIT] ${redisKey}`);
+      // console.log(`[CACHE HIT] ${redisKey}`);
       return res.json(JSON.parse(cached));
     }
 

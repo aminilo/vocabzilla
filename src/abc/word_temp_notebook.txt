@@ -5333,10 +5333,10 @@ underneath ## The mechanic looked underneath to inspect the car.
 worm ## The bird caught some worms for its nestlings.
 worm ## The fisherman used worms to catch fish.
 
-abandon ## They had to abandon the car because it broke down.
-abandon ## He had abandoned his family years before.
-abandon ## Never abandon your attempt to chase your dreams.
-abandon ## While trying to kick the habit of smoking, you must not abandon yourself to sudden impulses.
+abandon ## They had to abandon the car because it [broke] down.
+abandon ## He had [abandoned] his family years before.
+abandon ## Never abandon your attempt to chase your [dreams].
+abandon ## While trying to [kick] the habit of smoking, you must not abandon [yourself] to sudden impulses.
 
 ambitious ## Being ambitious is necessary for someone who wants to become rich.
 ambitious ## He was very ambitious and wanted to break the world record.
