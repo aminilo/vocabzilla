@@ -11,7 +11,7 @@ npx ts-node src/abc/_小词汇CSV.ts
 
 ```sh
 \copy "Enword" (word) FROM '~/Documents/vocabzilla/src/abc/word_stash.txt' WITH (FORMAT TEXT);
-\copy "Enexp"("wordKey", "exp") FROM '~/Documents/vocabzilla/src/abc/_word_temp.csv' DELIMITER ',' CSV HEADER;
+\copy "Enexp"("wordKey", "exp") FROM '~/Documents/vocabzilla/src/abc/word_temp.csv' DELIMITER ',' CSV HEADER;
 \copy "Hanzi" (hanzi, pinyin, meaning) FROM '~/Documents/vocabzilla/src/abc/汉字表.csv' DELIMITER ',' CSV HEADER;
 \copy "Cihui"("ch", "en") FROM '~/Documents/vocabzilla/src/abc/小词汇.csv' DELIMITER ',' CSV HEADER;
 ```
@@ -26,5 +26,5 @@ npx ts-node src/abc/_FamilyCSV.ts
 ### Start afresh (if need be)
 
 ```ts
-ALTER SEQUENCE "Enword_id_seq" RESTART WITH 1;
+ALTER SEQUENCE "Enexp_id_seq" RESTART WITH 1;
 ```
