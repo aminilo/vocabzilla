@@ -36,7 +36,7 @@ export const registerSocketHandlers = (io: Server)=> {
         return;
       }
       
-      console.log('[debug] itemType:', itemType, '| resolved:', itemTypeEnum);
+      // console.log('[debug] itemType:', itemType, '| resolved:', itemTypeEnum);
 
       try{
         const existing = await prisma.userProgress.findUnique({
@@ -109,8 +109,6 @@ export const registerSocketHandlers = (io: Server)=> {
       }
     });
 
-    socket.on('disconnect', ()=> {
-      console.log('🔌 Client disconnected:', socket.id);
-    });
+    socket.on('disconnect', ()=> console.log('🔌 Client disconnected:', socket.id));
   });
 };
